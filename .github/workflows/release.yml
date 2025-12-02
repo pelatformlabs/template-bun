@@ -23,6 +23,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Git User
+        run: |
+          git config --global user.email "lukmanaviccena@gmail.com"
+          git config --global user.name "Lukman Aviccena"
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:

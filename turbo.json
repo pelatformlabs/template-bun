@@ -27,6 +27,9 @@
       "cache": false,
       "persistent": true
     },
+    "lint": {
+      "dependsOn": ["^build"]
+    },
     "start": {
       "dependsOn": ["^build"],
       "cache": false,
