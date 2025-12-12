@@ -20,16 +20,14 @@
       "cache": false,
       "persistent": true
     },
-    "lint": {
-      "dependsOn": ["^build"]
-    },
+    "lint": {},
     "start": {
       "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
     },
     "types:check": {
-      "dependsOn": [],
+      "dependsOn": ["^build"],
       "outputs": []
     }
   }
