@@ -5,6 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project Overview
 
 This is a Bun monorepo template for building and publishing TypeScript/Node packages. It uses:
+
 - **Bun** as the package manager (required: `bun >= 1.0.0`)
 - **Turborepo** for task orchestration across workspaces
 - **Biome** for linting and formatting (extends `@pelatform/biome-config/base`)
@@ -69,6 +70,7 @@ Workspaces are defined in both `package.json` and `bunfig.toml`.
 ## Turborepo Pipeline
 
 The `turbo.json` defines task dependencies:
+
 - `build`: Depends on `^build` (build dependencies first). Outputs: `.next/**`, `.source/**`, `build/**`, `dist/**`, `out/**`
 - `dev`: Persistent, uncached
 - `start`: Depends on `^build`, persistent
@@ -79,6 +81,7 @@ The `turbo.json` defines task dependencies:
 ## CI/CD
 
 GitHub Actions workflows:
+
 - **Lint** (`.github/workflows/lint.yml`): Runs on PRs to main. Builds, lints, and type-checks
 - **Release** (`.github/workflows/release.yml`): Triggered on pushes to main with changes in `.changeset/**` or `packages/**`. Runs build/lint then creates release PR or publishes to npm
 
@@ -89,6 +92,7 @@ Commitlint enforces conventional commits with types: `feat`, `feature`, `fix`, `
 ## Publishing
 
 The `scripts/publish.sh` script:
+
 1. Finds all `package.json` files under `packages/`
 2. Skips packages with `"private": true`
 3. Publishes each package with `bun publish`
