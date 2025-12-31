@@ -75,15 +75,25 @@ bun run test --filter=@pelatform/main
 
 ```
 packages/           # Published or internal packages
-├── core/          # Core package
-└── main/          # Main package
+├── core/          # Core package (template-ready)
+└── main/          # Main package (template-ready)
 
 apps/              # Optional applications consuming packages
-├── web/           # Web application
-└── docs/          # Documentation
+├── web/           # Web application (template-ready)
+└── docs/          # Documentation (template-ready)
+
+examples/          # Example implementations
+├── next/          # Next.js example (template-ready)
+└── vite/          # Vite example (template-ready)
 ```
 
-Workspaces are defined in both `package.json` and `bunfig.toml`. Workspaces follow the pattern `packages/**` and `apps/**`, allowing for a flexible monorepo structure where `packages/` contains publishable libraries and `apps/` contains applications that consume those packages.
+Workspaces are defined in both `package.json` and `bunfig.toml`. Workspaces follow the pattern `packages/**`, `apps/**`, and `examples/**`:
+
+- **packages/**: Published or internal libraries
+- **apps/**: Applications that consume packages (docs, demos)
+- **examples/**: Example implementations showcasing usage
+
+**Note**: All workspace directories are currently template-ready (empty with .gitkeep files). Populate them according to your project needs.
 
 ## Turborepo Pipeline
 
@@ -100,23 +110,29 @@ The `turbo.json` defines task dependencies:
 
 **Biome** (`biome.jsonc`) extends `@pelatform/biome-config/base` for consistent linting and formatting across the project. Lint-staged with Husky pre-commit hooks ensures code quality before commits.
 
-**Lint-staged configuration**:
+**Lint-staged configuration** (run automatically on pre-commit):
 
-- TypeScript/JavaScript: Biome check with auto-fix
-- Markdown/YAML: Prettier formatting
-- JSON/HTML: Biome format
+- TypeScript/JavaScript files: `biome check --write --no-errors-on-unmatched`
+- Markdown/YAML files: `prettier --write`
+- JSON/HTML files: `biome format --write --no-errors-on-unmatched`
+
+**Note**: Husky hooks are installed via `bun install` (triggers the `prepare` script).
 
 ## CI/CD
 
 GitHub Actions workflows:
 
-- **Lint** (`.github/workflows/lint.yml`): Runs on PRs to main. Builds, lints, and type-checks
+- **Lint** (`.github/workflows/lint.yml`):
+  - Runs on pull requests to `main` branch
+  - Installs dependencies with frozen lockfile
+  - Executes: `bun run build`, `bun run lint:fix && bun run lint`, `bun run types:check`
+
 - **Release** (`.github/workflows/release.yml`):
-  - Triggered on pushes to main with changes in `.changeset/**` or `packages/**`
-  - Configured git user: `Lukman Aviccena <lukmanaviccena@gmail.com>`
-  - Runs build and lint with `bun run lint:fix && bun run lint`
-  - Uses `changesets/action@v1` to create release PRs or publish to npm
-  - Requires `NPM_TOKEN` and `GITHUB_TOKEN` secrets
+  - Triggered on pushes to `main` with changes in `.changeset/**` or `packages/**`
+  - Git user: `Lukman Aviccena <lukmanaviccena@gmail.com>`
+  - Executes: `bun run build`, `bun run lint:fix && bun run lint`
+  - Uses `changesets/action@v1` to create version PRs or publish to npm
+  - Required secrets: `NPM_TOKEN`, `GITHUB_TOKEN` or `GH_PAT`
 
 ## Commit Convention
 
@@ -142,3 +158,74 @@ The `scripts/publish.sh` script:
 4. Creates tags via `changeset tag`
 
 Requires `NPM_TOKEN` environment variable.
+
+## Package Development Guidelines
+
+### Creating a New Package
+
+When adding packages to the monorepo, follow this structure:
+
+```
+packages/your-package/
+├── src/
+│   ├── index.ts          # Main entry point and exports
+│   └── ...               # Other source files
+├── package.json          # Package metadata
+├── tsconfig.json         # TypeScript configuration
+├── tsup.config.ts        # Build configuration (if using tsup)
+└── README.md             # Package documentation
+```
+
+Key points:
+
+- Each package should have its own `package.json` with proper `name`, `version`, and `exports` field
+- Use workspace protocol for internal dependencies: `"@pelatform/other-package": "workspace:*"`
+- Define build scripts if the package needs compilation
+- Ensure proper TypeScript exports configuration in `tsconfig.json`
+
+### Example Apps
+
+The `examples/` directory showcases implementations:
+
+- **next/**: Next.js integration examples
+- **vite/**: Vite/Rollup integration examples
+
+These are references for users consuming your packages.
+
+## Environment Variables
+
+Required for CI/CD and publishing:
+
+- `NPM_TOKEN`: npm authentication token for publishing packages
+- `GITHUB_TOKEN` or `GH_PAT`: GitHub token for creating releases via Changesets action
+
+## Common Issues
+
+### Turbo Cache Issues
+
+If you encounter stale cache issues with Turborepo:
+
+```bash
+bun run clean          # Remove build artifacts
+bun run clean:all      # Deep clean including node_modules and locks
+```
+
+### Husky Hooks Not Working
+
+If pre-commit hooks aren't running:
+
+```bash
+bun run prepare        # Reinstall Husky hooks
+```
+
+### Workspace Dependencies
+
+When adding dependencies to workspaces, use the workspace protocol:
+
+```bash
+# Add to a specific workspace
+bun add <package> --filter=@pelatform/your-package
+
+# Add to root (dev dependency)
+bun add <package> -D
+```
