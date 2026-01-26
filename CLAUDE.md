@@ -14,7 +14,7 @@ This is a Bun monorepo template for building and publishing TypeScript/Node pack
 - **Husky** for Git hooks
 - **Commitlint** with `@commitlint/config-conventional` for commit message linting
 
-**Important**: This project uses Bun as the package manager (`packageManager: bun@1.3.5`). Always use `bun` commands instead of `npm` or `yarn`.
+**Important**: This project uses Bun as the package manager. Always use `bun` commands instead of `npm` or `yarn`. The `packageManager` field is set to `bun@1.3.6` in `package.json`.
 
 ## Common Commands
 
@@ -87,7 +87,7 @@ examples/          # Example implementations
 └── vite/          # Vite example (template-ready)
 ```
 
-Workspaces are defined in both `package.json` and `bunfig.toml`. Workspaces follow the pattern `packages/**`, `apps/**`, and `examples/**`:
+Workspaces are defined in both `package.json` and `bunfig.toml`. The workspace patterns are `packages/**`, `apps/**`, and `examples/**`:
 
 - **packages/**: Published or internal libraries
 - **apps/**: Applications that consume packages (docs, demos)
@@ -105,6 +105,8 @@ The `turbo.json` defines task dependencies:
 - `lint`: No dependencies
 - `types:check`: Depends on `^build`
 - `clean`/`clean:all`: Uncached, non-persistent
+
+The `globalEnv` includes `NODE_ENV` for environment-aware caching.
 
 ## Code Quality
 
@@ -140,24 +142,24 @@ Commitlint enforces conventional commits with types: `feat`, `feature`, `fix`, `
 
 ## Changesets Configuration
 
-Changesets is configured in `.changeset/config.json`:
+Changesets is configured in `.changeset/config.json` for the `pelatformlabs/template` repository:
 
 - Changelog generation uses `@changesets/changelog-github` for GitHub releases
 - Access level: `public` (packages are published to public npm)
 - Internal dependencies are bumped as `patch` versions
 - Base branch: `main`
-- Workspace protocol-only version bumping enabled
+- Workspace protocol-only version bumping enabled (`bumpVersionsWithWorkspaceProtocolOnly`)
 
 ## Publishing
 
 The `scripts/publish.sh` script:
 
-1. Finds all `package.json` files under `packages/`
+1. Finds all `package.json` files under `packages/` (excluding `node_modules`)
 2. Skips packages with `"private": true`
-3. Publishes each package with `bun publish`
+3. Publishes each package with `bun publish` (continues on error)
 4. Creates tags via `changeset tag`
 
-Requires `NPM_TOKEN` environment variable.
+Requires `NPM_TOKEN` environment variable for npm authentication.
 
 ## Package Development Guidelines
 
@@ -182,6 +184,18 @@ Key points:
 - Use workspace protocol for internal dependencies: `"@pelatform/other-package": "workspace:*"`
 - Define build scripts if the package needs compilation
 - Ensure proper TypeScript exports configuration in `tsconfig.json`
+
+### Testing
+
+When adding tests to packages, use the workspace protocol for test dependencies and ensure test scripts are defined in each package's `package.json`. Run tests with:
+
+```bash
+# Run all tests
+bun run test
+
+# Run tests for a specific package
+bun run test --filter=@pelatform/your-package
+```
 
 ### Example Apps
 
@@ -220,7 +234,17 @@ bun run prepare        # Reinstall Husky hooks
 
 ### Workspace Dependencies
 
-When adding dependencies to workspaces, use the workspace protocol:
+When adding dependencies to workspaces, use the workspace protocol (`workspace:*`) for internal dependencies in `package.json`:
+
+```json
+{
+  "dependencies": {
+    "@pelatform/other-package": "workspace:*"
+  }
+}
+```
+
+To add packages via CLI:
 
 ```bash
 # Add to a specific workspace
