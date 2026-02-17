@@ -14,7 +14,7 @@ This is a Bun monorepo template for building and publishing TypeScript/Node pack
 - **Husky** for Git hooks
 - **Commitlint** with `@commitlint/config-conventional` for commit message linting
 
-**Important**: This project uses Bun as the package manager. Always use `bun` commands instead of `npm` or `yarn`. The `packageManager` field is set to `bun@1.3.6` in `package.json`.
+**Important**: This project uses Bun as the package manager. Always use `bun` commands instead of `npm` or `yarn`. The `packageManager` field is set to `bun@1.3.9` in `package.json`.
 
 ## Common Commands
 
