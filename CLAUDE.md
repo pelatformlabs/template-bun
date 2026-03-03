@@ -14,7 +14,7 @@ This is a Bun monorepo template for building and publishing TypeScript/Node pack
 - **Husky** for Git hooks
 - **Commitlint** with `@commitlint/config-conventional` for commit message linting
 
-**Important**: This project uses Bun as the package manager. Always use `bun` commands instead of `npm` or `yarn`. The `packageManager` field is set to `bun@1.3.9` in `package.json`.
+**Important**: This project uses Bun as the package manager. Always use `bun` commands instead of `npm` or `yarn`. The `packageManager` field is set to `bun@1.3.10` in `package.json`.
 
 ## Common Commands
 
@@ -34,11 +34,14 @@ bun run types:check
 # Lint (check only - runs biome check + turbo run lint)
 bun run lint
 
-# Lint with auto-fix (runs biome check --write --unsafe + turbo run lint -- --fix)
+# Lint with auto-fix (runs biome check --write --unsafe in root + turbo run lint -- --fix for workspaces)
 bun run lint:fix
 
 # Format code with Biome
 bun run format
+
+# Check format without writing
+bun run format:check
 
 # Clean build artifacts
 bun run clean
@@ -87,7 +90,7 @@ examples/          # Example implementations
 └── vite/          # Vite example (template-ready)
 ```
 
-Workspaces are defined in both `package.json` and `bunfig.toml`. The workspace patterns are `packages/**`, `apps/**`, and `examples/**`:
+Workspaces are defined in both `package.json` and `bunfig.toml` with the same patterns: `packages/**`, `apps/**`, and `examples/**`:
 
 - **packages/**: Published or internal libraries
 - **apps/**: Applications that consume packages (docs, demos)
@@ -154,12 +157,24 @@ Changesets is configured in `.changeset/config.json` for the `pelatformlabs/temp
 
 The `scripts/publish.sh` script:
 
-1. Finds all `package.json` files under `packages/` (excluding `node_modules`)
+1. Finds all `package.json` files under `packages/` directory only (excluding `node_modules`)
 2. Skips packages with `"private": true`
 3. Publishes each package with `bun publish` (continues on error)
 4. Creates tags via `changeset tag`
 
+**Note**: This script only publishes from `packages/`, not from `apps/` or `examples/`.
+
 Requires `NPM_TOKEN` environment variable for npm authentication.
+
+## Current Workspace Status
+
+All workspace directories are currently template-ready (empty with .gitkeep files):
+
+- `packages/` - No packages exist yet
+- `apps/` - No applications exist yet
+- `examples/` - No examples exist yet
+
+Populate these directories according to your project needs following the structure below.
 
 ## Package Development Guidelines
 
@@ -231,6 +246,8 @@ If pre-commit hooks aren't running:
 ```bash
 bun run prepare        # Reinstall Husky hooks
 ```
+
+**Note**: The Husky hooks are configured in `.husky_/` directory and use lint-staged configuration from root `package.json`. Pre-commit runs lint-staged automatically, which checks staged files before committing.
 
 ### Workspace Dependencies
 
