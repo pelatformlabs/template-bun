@@ -21,20 +21,20 @@
   "author": "Lukman Aviccena <lukman@pelatform.com>",
   "license": "MIT",
   "devDependencies": {
-    "@biomejs/biome": "^2.4.7",
+    "@biomejs/biome": "^2.4.8",
     "@changesets/changelog-github": "^0.6.0",
     "@changesets/cli": "^2.30.0",
-    "@commitlint/config-conventional": "^20.4.4",
+    "@commitlint/config-conventional": "^20.5.0",
     "@pelatform/biome-config": "^0.1.6",
-    "@types/bun": "^1.3.10",
+    "@types/bun": "^1.3.11",
     "@types/node": "^25.5.0",
     "commitlint-plugin-function-rules": "^4.3.2",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.1",
     "rimraf": "^6.1.3",
-    "turbo": "2.8.17",
-    "typescript": "^5.9.3"
+    "turbo": "2.8.20",
+    "typescript": "^6.0.2"
   },
   "workspaces": [
     "packages/**",
@@ -50,5 +50,5 @@
     "node": ">=22",
     "bun": ">=1.0.0"
   },
-  "packageManager": "bun@1.3.10"
+  "packageManager": "bun@1.3.11"
 }
