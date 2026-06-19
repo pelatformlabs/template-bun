@@ -6,7 +6,7 @@ This template provides a ready-to-use setup for multi-package repositories with 
 
 ## Features
 
-- Monorepo workspaces: `packages/**`, optional `apps/**`
+- Monorepo workspaces: `packages/**`, `apps/**`, `examples/**`
 - Bun-first workflows: `bun install`, `bun run <script>`
 - Turborepo pipelines for `dev`, `build`, `start`, `types:check`
 - Biome-based lint and format with consistent project style
@@ -41,7 +41,8 @@ bun run format
 ## Workspace Layout
 
 - `packages/` – Each published or internal package lives here
-- `apps/` – Optional applications (e.g., docs, demos) consuming packages
+- `apps/` – Applications (e.g., docs, demos) consuming packages
+- `examples/` – Example implementations (e.g., Next.js, Vite)
 
 Example package structure:
 
